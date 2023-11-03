@@ -1,2 +1,3 @@
 # Born2beroot
-This document is a System Administration related exercise.
+## Description
+This project aims to introduce you to the wonderful world of virtualization.
