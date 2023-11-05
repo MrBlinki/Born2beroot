@@ -42,7 +42,7 @@ Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.de
 After following those steps, the `lsblk` command gives a result similar to the example in the subject.
 
 ## Tools
-**switch user**: to start a root shell, use `su -` or `su -l`
+**substitute user**: to start a root shell, use `su -` or `su -l`
 > The (-) switch has the same effect as logging into a system directly with that user account. In essence, you become that user.
 
 **sudo**: `apt install sudo` -> `adduser maroth sudo` to add the user to the sudo group.
