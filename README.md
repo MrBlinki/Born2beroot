@@ -30,6 +30,7 @@ Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.de
 	- Passwords (to be changed later): pass
 	- User: maroth
 	- Partition guided LVM encrypted
+		- Cancelled data replacement step to save disk space
 	- Separate /home partition
 	- Passphrase: passphrase
 	- Used whole space
@@ -41,18 +42,20 @@ Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.de
 After following those steps, the `lsblk` command gives a result similar to the example in the subject.
 
 ## Tools
+**switch user**: to start a root shell, use `su -` or `su -l`
+
 **sudo**: `apt install sudo` -> `adduser maroth sudo` to add the user to the sudo group.
 
 **AppArmor**: comes preinstalled with Debian (check if running with `aa-status`). It's a security system that can restrict the actions of processes.
 
-**vim**: `apt install vim`
+**vim**: `sudo apt install vim`
 
 ## SSH Service
 [SSH on Debian Wiki](https://wiki.debian.org/SSH)
 
 OpenSSH is the most popular and widely used implementation of SSH.
 
-- `apt install openssh-server`
+- `sudo apt install openssh-server`
 - Changing the port in `/etc/ssh/sshd_config` (line 14)
 - `sudo service ssh restart`
 - `sudo service ssh status` to check the port
