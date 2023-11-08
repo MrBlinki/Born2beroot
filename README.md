@@ -5,6 +5,13 @@ This project aims to introduce you to the wonderful world of virtualization.
 
 The aim of this repo is to keep track of the subject step by step and backup any useful scripts or tips/tricks.
 
+## Table of contents
+1. [Installation](#installation)
+1. [Tools](#tools)
+1. [SSH Service](#ssh-service)
+1. [Hostname](#hostname)
+1. [Strong password policy](#strong-password-policy)
+
 ## Installation
 Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.debian.org/)
 
@@ -72,3 +79,58 @@ To check if SSH is working correctly, we can connect via SSH to the VM (need cre
 ## UFW firewall
 [Uncomplicated Firewall (ufw) on Debian Wiki](https://wiki.debian.org/Uncomplicated%20Firewall%20%28ufw%29)
 
+Installation
+- `sudo apt install ufw`
+- `sudo ufw enable`
+
+Check status : `sudo ufw status`
+
+By default, UFW denies all incoming connections and allows all outgoing connections.
+To re-define the default behavior, run:
+- `sudo ufw default deny incoming`
+- `sudo ufw default allow outgoing`
+
+Default configuration file : `/etc/default/ufw`
+
+Open port 4242 : `sudo ufw allow 4242`
+
+## Hostname
+[Hostname on Debian Wiki](https://wiki.debian.org/Hostname)
+
+- Update `/etc/hostname`
+- Update `/etc/hosts`, so local address(es) resolves with the new system name.
+- Restart the system
+
+## Strong password policy
+[LinuxTechi - How to enforce password Policies in Linux](https://www.linuxtechi.com/enforce-password-policies-linux-ubuntu-centos/)
+
+Edit `/etc/login.defs`:
+- Your password has to expire every 30 days: `PASS_MAX_DAYS	30`
+- The minimum number of days allowed before the modification of a password will be set to 2: `PASS_MIN_DAYS	2`
+- The user has to receive a warning message 7 days before their password expires: `PASS_WARN_AGE	7`
+
+Additional PAM package is needed to add rules:
+- `sudo apt install libpam-pwquality`
+
+(The PAM packages are located in `/usr/lib/x86_64-linux-gnu/security`)
+
+[Debian manpage for pam_pwquality.so](https://manpages.debian.org/testing/libpam-pwquality/pam_pwquality.8.en.html)
+
+Append line 25 of `/etc/pam.d/common-password`:
+- Your password must be at least 10 characters long: `minlen=10`
+- It must contain
+	- An uppercase letter: `ucredit=-1`
+	- A lowercase letter: `lcredit=-1`
+	- A number: `dcredit=-1`
+- It must not contain:
+	- More than 3 consecutive identical characters: `maxrepeat=3`
+	- The name of the user: `reject_username`
+- The password must have at least 7 characters that are not part of the former password: `difok=7`
+>Note that root is not asked for an old password so the checks that compare the old and new password are not performed
+- Root password has to comply with this policy : `enforce_for_root`
+
+NB: The negative values indicate the minimum number of X needed in the password. A positive number would use the credit system of pam_pwquality.
+
+To change the password, use `passwd`
+
+**STILL NEED TO CHANGE THE PASSWORDS AND CHECK EVERYTHING**
