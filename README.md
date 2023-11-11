@@ -11,6 +11,7 @@ The aim of this repo is to keep track of the subject step by step and backup any
 1. [SSH Service](#ssh-service)
 1. [Hostname](#hostname)
 1. [Strong password policy](#strong-password-policy)
+1. [SUDO configuration](#sudo-configuration)
 
 ## Installation
 Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.debian.org/)
@@ -104,10 +105,17 @@ Open port 4242 : `sudo ufw allow 4242`
 ## Strong password policy
 [LinuxTechi - How to enforce password Policies in Linux](https://www.linuxtechi.com/enforce-password-policies-linux-ubuntu-centos/)
 
-Edit `/etc/login.defs`:
-- Your password has to expire every 30 days: `PASS_MAX_DAYS	30`
-- The minimum number of days allowed before the modification of a password will be set to 2: `PASS_MIN_DAYS	2`
-- The user has to receive a warning message 7 days before their password expires: `PASS_WARN_AGE	7`
+To change existing users password expiry information, use `chage` (see [man chage](https://man7.org/linux/man-pages/man1/chage.1.html)):
+- Your password has to expire every 30 days: `sudo chage -M 30 LOGIN`
+- The minimum number of days allowed before the modification of a password will be set to 2: `sudo chage -m 2 LOGIN`
+- The user has to receive a warning message 7 days before their password expires: `sudo chage -W 7 LOGIN`
+
+To change the default configuration for new users, edit `/etc/login.defs` (line 165):
+- `PASS_MAX_DAYS 30`
+- `PASS_MIN_DAYS 2`
+- `PASS_WARN_AGE 7`
+
+To check password expiry information, use `chage -l LOGIN`
 
 Additional PAM package is needed to add rules:
 - `sudo apt install libpam-pwquality`
@@ -133,4 +141,21 @@ NB: The negative values indicate the minimum number of X needed in the password.
 
 To change the password, use `passwd`
 
-**STILL NEED TO CHANGE THE PASSWORDS AND CHECK EVERYTHING**
+New password set to personal 42 password
+
+## SUDO configuration
+[DigitalOcean - How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
+
+`visudo` checks the syntax of the config file before closing it. To change the editor used by visudo, run `sudo update-alternatives --config editor`
+
+[man sudoers](https://www.sudo.ws/docs/man/sudoers.man/)
+
+Configuration file: `/etc/sudoers`
+- Limit authentication to 3 attempts: `Defaults	passwd_tries=3`
+- Custom message when wrong password: `Defaults	badpass_message="*BUZZ*Wrong password"`
+- Log inputs and outputs:
+	- `Defaults	logfile="/var/log/sudo/sudo.log"`
+	- `Defaults log_input`
+	- `Defaults log_output`
+- Enable TTY mode: `Defaults	requiretty`
+- Paths that can be used by sudo are restricted by:  `Defaults	secure_path=...`
