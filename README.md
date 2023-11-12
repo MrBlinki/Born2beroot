@@ -12,6 +12,8 @@ The aim of this repo is to keep track of the subject step by step and backup any
 1. [Hostname](#hostname)
 1. [Strong password policy](#strong-password-policy)
 1. [SUDO configuration](#sudo-configuration)
+1. [Users and groups](#users-and-groups)
+1. [monitoring.sh](#monitoringsh)
 
 ## Installation
 Latest stable version of Debian (12.2) downloaded on [debian.org](https://www.debian.org/)
@@ -58,6 +60,8 @@ After following those steps, the `lsblk` command gives a result similar to the e
 **AppArmor**: comes preinstalled with Debian (check if running with `aa-status`). It's a security system that can restrict the actions of processes.
 
 **vim**: `sudo apt install vim`
+
+**dpkg**: Package manager. Run `dpkg -s PACKAGE` to search for a package
 
 ## SSH Service
 [SSH on Debian Wiki](https://wiki.debian.org/SSH)
@@ -134,7 +138,7 @@ Append line 25 of `/etc/pam.d/common-password`:
 	- More than 3 consecutive identical characters: `maxrepeat=3`
 	- The name of the user: `reject_username`
 - The password must have at least 7 characters that are not part of the former password: `difok=7`
->Note that root is not asked for an old password so the checks that compare the old and new password are not performed
+	>Note that root is not asked for an old password so the checks that compare the old and new password are not performed
 - Root password has to comply with this policy : `enforce_for_root`
 
 NB: The negative values indicate the minimum number of X needed in the password. A positive number would use the credit system of pam_pwquality.
@@ -159,3 +163,43 @@ Configuration file: `/etc/sudoers`
 	- `Defaults log_output`
 - Enable TTY mode: `Defaults	requiretty`
 - Paths that can be used by sudo are restricted by:  `Defaults	secure_path=...`
+
+The `log_input` and `log_output` archive everything in `/var/log/sudo-io`. We can then use `sudoreplay` to replay a specific sudo session by specifying it's ID. (IDs can be found bt running `sudo sudoreplay -l`).
+
+## Users and groups
+[Debian Manpage on adduser](https://manpages.debian.org/testing/adduser/adduser.8.en.html)
+
+- Create the user42 group: `sudo addgroup user42`
+- Add user to a group: `sudo adduser USER GROUP`
+- To check groups of a user: `groups USER`
+- To check users of a group: `cat /etc/group | grep GROUP`
+
+## monitoring.sh
+List of how to get each info required by the subject:
+- Architecture of OS and kernel version: `uname -a`
+- Number of physical processors: `grep "physical id" /proc/cpuinfo | sort | uniq | wc -l`
+	>This command looks through the /proc/cpuinfo file for lines containing the string "physical id", sorts them, removes duplicates, and counts the number of unique lines. The resulting number is the number of physical processors.
+- Number of virtual processors: `nproc --all`
+- Current available RAM and utilization rate as a percentage:
+	- `free -m` to get info in Mi
+	- `grep Mem` to get only the line concerning RAM
+	- `awk` to make calculations on the fields (e.g. second field is `$2`)
+- Current available memory (i.e. disk usage):
+	- `df -h` to get info in human-readable units
+	- `grep /$` to get the line ending with a / (i.e the line for the root directory)
+	- `awk` to get the fields
+- Current utilization rate of processors as a percentage:
+	- `top -bn1` to get the CPU load (`b`=batch mode, `n1`=execute 1 time)
+	- `grep ^top` to get the line starting with top (first line)
+	- `awk` get the load average percentage (first of the three = last 1 minute)
+- Date and time of the last boot: `who -b`
+- Wether LVM is active or not:
+	- `lsblk | grep lvm`
+	- Count the number of lines with `wc`
+- Number of active connections: `ss -s` to show a summary of socket statitstics
+- Number of users using the server: `users | wc -w`
+- IPv4: `hostname -I`
+- MAC address: `ip link show | grep ether`
+- Number of commands executed with sudo: `sudo grep COMMAND /var/log/sudo/sudo.log | wc -l`
+
+Script in `/usr/local/bin`
