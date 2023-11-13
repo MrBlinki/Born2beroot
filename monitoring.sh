@@ -22,7 +22,7 @@ ipv4=$(hostname -I)
 mac=$(ip link show | grep ether | awk '{print $2}')
 count_sudo=$(grep COMMAND /var/log/sudo/sudo.log | wc -l)
 
-echo "	#Architecture:	$arch
+wall "	#Architecture:	$arch
 	#CPU physical:	$cpu
 	#vCPU:	$vcpu
 	#Memory Usage:	${used_ram}/${total_ram}MiB (${per_ram}%)

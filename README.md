@@ -203,3 +203,7 @@ List of how to get each info required by the subject:
 - Number of commands executed with sudo: `sudo grep COMMAND /var/log/sudo/sudo.log | wc -l`
 
 Script in `/usr/local/bin`
+
+Cronjob Setup:
+- `sudo crontab -e`
+- Cronjob every 10 minutes : `*/10 * * * *`
