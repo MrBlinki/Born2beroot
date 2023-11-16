@@ -9,6 +9,7 @@ The aim of this repo is to keep track of the subject step by step and backup any
 1. [Installation](#installation)
 1. [Tools](#tools)
 1. [SSH Service](#ssh-service)
+1. [UFW firewall](#ufw-firewall)
 1. [Hostname](#hostname)
 1. [Strong password policy](#strong-password-policy)
 1. [SUDO configuration](#sudo-configuration)
@@ -98,6 +99,10 @@ To re-define the default behavior, run:
 Default configuration file : `/etc/default/ufw`
 
 Open port 4242 : `sudo ufw allow 4242`
+
+Delete rule :
+- `sudo ufw status numbered` to get the index of the rule
+- `sudo ufw delete NUMBER`
 
 ## Hostname
 [Hostname on Debian Wiki](https://wiki.debian.org/Hostname)
