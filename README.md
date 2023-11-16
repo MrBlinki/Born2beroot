@@ -212,3 +212,11 @@ Script in `/usr/local/bin`
 Cronjob Setup:
 - `sudo crontab -e`
 - Cronjob every 10 minutes : `*/10 * * * *`
+
+Disable cron and stop it:
+- `sudo systemctl disable cron` -> disable the service, even after reboot
+- `sudo systemctl stop cron` -> stop now
+
+To start and enable:
+- `sudo systemctl enable cron`
+- `sudo systemctl start cron`
